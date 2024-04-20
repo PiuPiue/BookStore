@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
-
+//第一次改变
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
