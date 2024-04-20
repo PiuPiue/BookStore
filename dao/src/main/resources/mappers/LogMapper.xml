@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.bookstore.mapper.LogMapper">
+
+    <resultMap id="BaseResultMap" type="com.briup.bookstore.po.Log">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="businessName" column="business_name" jdbcType="VARCHAR"/>
+            <result property="requestUrl" column="request_url" jdbcType="VARCHAR"/>
+            <result property="requestMethod" column="request_method" jdbcType="VARCHAR"/>
+            <result property="operationName" column="operation_name" jdbcType="VARCHAR"/>
+            <result property="browserName" column="browser_name" jdbcType="VARCHAR"/>
+            <result property="ip" column="ip" jdbcType="VARCHAR"/>
+            <result property="source" column="source" jdbcType="VARCHAR"/>
+            <result property="spendTime" column="spend_time" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="paramsJson" column="params_json" jdbcType="VARCHAR"/>
+            <result property="classPath" column="class_path" jdbcType="VARCHAR"/>
+            <result property="methodName" column="method_name" jdbcType="VARCHAR"/>
+    </resultMap>
+    <insert id="insertLog">
+        insert into book.es_log(id, username, business_name, request_url, request_method, operation_name, browser_name, ip, source, spend_time, create_time, params_json, class_path, method_name) values (#{id},#{username},#{businessName},#{requestUrl},#{requestMethod},#{operationName},#{browserName},#{ip},#{source},#{spendTime},#{createTime},#{paramsJson},#{classPath},#{methodName})
+    </insert>
+    <delete id="deleteBatchIds">
+        delete from book.es_log where id = #{ids}
+    </delete>
+    <select id="selectAllLogByUsername" resultMap="BaseResultMap">
+        select *
+        from book.es_log
+        <where>
+            <if test="username!=null">
+                username like concat('%',#{username},'%')
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

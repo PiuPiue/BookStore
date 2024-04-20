@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.bookstore.mapper.CategoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.briup.bookstore.po.Category">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="ParentResultMap" type="com.briup.bookstore.vo.CategoryInfoVO">
+        <id property="id" column="pId" jdbcType="INTEGER"/>
+        <result property="name" column="pName" jdbcType="VARCHAR"/>
+        <result property="description" column="pDescription" jdbcType="VARCHAR"/>
+        <result property="parentId" column="pParentId" jdbcType="INTEGER"/>
+        <association property="children" resultMap="ChildrenResultMap"/>
+    </resultMap>
+
+    <resultMap id="ChildrenResultMap" type="com.briup.bookstore.vo.CategoryInfoVO">
+        <id property="id" column="cId" jdbcType="INTEGER"/>
+        <result property="name" column="cName" jdbcType="VARCHAR"/>
+        <result property="description" column="cDescription" jdbcType="VARCHAR"/>
+        <result property="parentId" column="cParentId" jdbcType="INTEGER"/>
+    </resultMap>
+    <insert id="insertCategory">
+        insert into book.es_category(name, description, parent_id)
+        values (#{name},#{description},#{parentId})
+    </insert>
+
+    <update id="updateCategoryById">
+        update book.es_category set name = #{name},
+                                parent_id = #{parentId},
+                               description = #{description}
+        where id = #{id}
+    </update>
+
+    <select id="selectAllCategory" resultType="com.briup.bookstore.po.Category">
+        select *
+        from book.es_category
+    </select>
+    <select id="selectCategoryById" resultMap="BaseResultMap">
+        select * from book.es_category where id = #{id}
+    </select>
+
+
+</mapper>

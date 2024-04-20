@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.bookstore.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.briup.bookstore.po.User">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="CHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="gender" column="gender" jdbcType="CHAR"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="birthday" column="birthday" jdbcType="DATE"/>
+        <result property="registerTime" column="register_time" jdbcType="TIMESTAMP"/>
+        <result property="roleId" column="role_id" jdbcType="INTEGER"/>
+        <result property="isVip" column="is_vip" jdbcType="BIT"/>
+        <result property="vipExpirationTime" column="vip_expiration_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insertUser">
+       insert into book.es_user
+           (username, password, phone, avatar, gender, birthday)
+       values
+           (#{username},#{password},#{phone},#{avatar},#{gender},#{birthday})
+    </insert>
+    <update id="updateUserMessage">
+        update book.es_user set username = #{username},phone = #{phone},avatar = #{avatar},gender = #{gender},birthday = #{birthday},status=#{status} where id = #{id};
+    </update>
+    <update id="updateUserPassword">
+        update book.es_user set password = #{password}  where id = #{id}
+    </update>
+    <delete id="deleteBatchIds">
+        delete from book.es_user where id = #{ids}
+    </delete>
+    <select id="getCountByUsername" resultType="java.lang.Integer">
+        select count(*) from book.es_user where username = #{username};
+    </select>
+    <select id="getUserByUsernameAndPassword" resultMap="BaseResultMap">
+        select * from book.es_user where username = #{username} and password = #{password};
+    </select>
+    <select id="getUserById" resultType="com.briup.bookstore.po.User">
+        select *
+        from book.es_user
+        where id = #{id};
+    </select>
+    <select id="getAllUserByUsernameOrStatus0rRegisterTime" resultType="com.briup.bookstore.po.User">
+        select * from book.es_user
+        <where>
+            <if test="username!=null">
+                username like concat('%',#{username},'%')
+            </if>
+            <if test="status!=null">
+                and status = #{status}
+            </if>
+            <if test="registerStartTime!=null">
+                    and register_time &gt; #{registerStartTime}
+            </if>
+            <if test="registerEndTime!=null">
+                and register_time &lt; #{registerEndTime}
+            </if>
+        </where>
+    </select>
+    <select id="getUserByUserIdAndPassword" resultType="com.briup.bookstore.po.User">
+   select * from book.es_user where id = #{userId} and password = #{password}
+    </select>
+
+</mapper>

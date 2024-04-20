@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.bookstore.mapper.OrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.briup.bookstore.po.Order">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <result property="payWay" column="pay_way" jdbcType="VARCHAR"/>
+        <result property="trackingNumber" column="tracking_number" jdbcType="INTEGER"/>
+        <result property="distributionMode" column="distribution_mode" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="payDate" column="pay_date" jdbcType="TIMESTAMP"/>
+        <result property="receiveUsername" column="receive_username" jdbcType="VARCHAR"/>
+        <result property="receiveAddress" column="receive_address" jdbcType="VARCHAR"/>
+        <result property="receivePhone" column="receive_phone" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ExtendResultMap" type="com.briup.bookstore.po.ext.OrderExtend" extends="BaseResultMap">
+        <id property="orderId" column="orderId"></id>
+        <result column="username" property="username"/>
+        <collection property="orderItems"
+                    resultMap="com.briup.bookstore.mapper.OrderItemMapper.ExtendResultMap"></collection>
+
+    </resultMap>
+    <insert id="save">
+        insert into book.es_order values (#{id},#{userId},#{createDate},#{payWay},#{trackingNumber},#{distributionMode},#{status},#{payDate},#{receiveUsername},#{receiveAddress},#{receivePhone})
+    </insert>
+    <delete id="deleteByUserId">
+        delete from book.es_order_item where order_id in(select es_order.id from book.es_order where user_id = #{uid});
+        delete from book.es_order where user_id = #{uid}
+    </delete>
+    <delete id="deleteById">
+        delete from book.es_order
+        where id = #{orderId}
+    </delete>
+
+    <select id="selectOrderDetailById" resultType="com.briup.bookstore.po.ext.OrderExtend">
+        SELECT
+            o.id orderId,
+            u.username,
+            o.status,
+            o.create_date,
+            o.receive_username,
+            o.receive_address,
+            o.receive_phone
+
+        FROM
+            book.es_user u
+                INNER JOIN
+            book.es_order o ON u.id = o.user_id
+                INNER JOIN
+            book.es_order_item oi ON oi.order_id = o.id
+                INNER JOIN
+            book.es_book b ON oi.book_id = b.id
+        WHERE
+            o.id = #{orderId}
+
+    </select>
+    <select id="selectOrderDetailByUserId" resultMap="ExtendResultMap">
+        SELECT
+            o.id orderId,
+            u.username,
+            o.status,
+            o.create_date,
+            o.receive_username,
+            o.receive_address,
+            o.receive_phone,
+            SUM(oi.num) AS num,
+            MAX(b.price) AS price -- 使用 MAX 聚合函数
+        FROM
+            book.es_user u
+                INNER JOIN
+            book.es_order o ON u.id = o.user_id
+                INNER JOIN
+            book.es_order_item oi ON oi.order_id = o.id
+                INNER JOIN
+            book.es_book b ON oi.book_id = b.id
+        WHERE
+            u.id = #{userId}
+        GROUP BY
+            o.id, u.username, o.status, o.create_date, o.receive_username, o.receive_address, o.receive_phone;
+
+
+    </select>
+    <select id="selectOrdersByCondition" resultMap="ExtendResultMap">
+        select o.id orderId,u.username,o.create_date,MAX(b.price) AS price,sum(oi.num) AS num,o.status,o.receive_username,o.receive_phone,o.receive_address
+        from book.es_user u inner join book.es_order o
+        on u.id = o.user_id
+        inner join book.es_order_item oi
+        on o.id = oi.order_id
+        inner join book.es_book b
+        on oi.book_id = b.id
+        <where>
+            <if test="orderSearchDTO.id!=null">
+                o.id like concat('%',#{orderSearchDTO.id},'%')
+            </if>
+            <if test="orderSearchDTO.status!=null">
+                and o.status = #{orderSearchDTO.status}
+            </if>
+        </where>
+        group by o.id,oi.num
+    </select>
+
+
+
+</mapper>

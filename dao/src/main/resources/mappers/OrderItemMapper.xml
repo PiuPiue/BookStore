@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.bookstore.mapper.OrderItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.briup.bookstore.po.OrderItem">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="orderId" column="order_id" jdbcType="INTEGER"/>
+            <result property="bookId" column="book_id" jdbcType="INTEGER"/>
+            <result property="num" column="num" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="ExtendResultMap" type="com.briup.bookstore.po.ext.OrderItemExtend"  extends="BaseResultMap">
+        <result property="name" column="name"></result>
+        <result property="price" column="price"></result>
+        <result property="cover" column="cover"></result>
+    </resultMap>
+    <insert id="save">
+        insert into book.es_order_item(order_id, book_id, num) values (#{orderId},#{bookId},#{num})
+    </insert>
+    <delete id="deleteByOrderId">
+
+        DELETE FROM book.es_order_item WHERE order_id = #{orderId};
+
+        DELETE FROM book.es_order WHERE id = #{orderId};
+
+    </delete>
+    <delete id="deleteByBookId">
+        delete from book.es_order_item
+        where book_id = #{bookId}
+    </delete>
+    <select id="findByOrderId" resultType="com.briup.bookstore.po.OrderItem">
+        select *
+        from book.es_order_item where id = #{orderId};
+    </select>
+    <select id="selectOrderIdById" resultType="java.lang.String">
+    select order_id
+    from book.es_order_item
+    where book_id = #{bookId}
+    </select>
+
+
+
+</mapper>

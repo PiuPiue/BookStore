@@ -1,0 +1,27 @@
+spring:
+  # 文件上传大小限制
+  servlet:
+    multipart:
+      # 单个文件最大限制
+      max-file-size: 5MB
+      # 单次请求文件最大限制
+      max-request-size: 5MB
+  # 配置路径匹配策略为ant风格
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  # 忽略 null
+  jackson:
+        default-property-inclusion: non_null
+
+# 配置七牛云OSS对象存储
+oss:
+  # 配置AK
+  accessKey: "eF1ThtSGyIU0I0X23TanFfSm6F7BZc50L5kkwECs"
+  # 配置SK
+  secretKey: "aAtCkZSh52fh97Z6C1Gyz_ru4_UtNw1agiSx6dHV"
+  # 配置桶
+  bucket: "tian-hao"
+  # 配置基础域名
+  baseUrl: "s6h14agmd.hn-bkt.clouddn.com"

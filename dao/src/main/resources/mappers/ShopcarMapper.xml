@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.bookstore.mapper.ShopcarMapper">
+
+    <resultMap id="BaseResultMap" type="com.briup.bookstore.po.Shopcar">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="bookId" column="book_id" jdbcType="INTEGER"/>
+        <result property="num" column="num" jdbcType="OTHER"/>
+    </resultMap>
+    <resultMap id="ExtendResultMap" type="com.briup.bookstore.po.ext.ShopCarExtend" extends="BaseResultMap">
+        <result property="name" column="name"></result>
+        <result property="price" column="price"></result>
+        <result property="cover" column="cover"></result>
+    </resultMap>
+
+    <insert id="save">
+        insert into book.es_shopcar(user_id, book_id,num) values (#{userId},#{bookId},1)
+    </insert>
+    <update id="updateNumById">
+        update book.es_shopcar set num = #{num} where id = #{id}
+    </update>
+    <delete id="deleteById">
+        delete from book.es_shopcar where id = #{id}
+    </delete>
+    <delete id="deleteByUserId">
+        delete from book.es_shopcar where user_id = #{uid}
+    </delete>
+
+    <delete id="deleteByBookId">
+        delete from book.es_shopcar
+        where book_id = #{bookId}
+    </delete>
+
+
+    <select id="findByUserIdAndBookId" resultMap="ExtendResultMap">
+        select * from book.es_shopcar where user_id = #{userId} and book_id = #{bookId}
+    </select>
+    <select id="findByUserId" resultMap="ExtendResultMap">
+        select * from book.es_shopcar inner join book.es_book on es_shopcar.book_id = es_book.id where es_shopcar.user_id = #{id}
+    </select>
+    <select id="findById" resultType="com.briup.bookstore.po.Shopcar">
+        select *
+        from book.es_shopcar where id = #{id};
+    </select>
+
+
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.bookstore.mapper.CollectMapper">
+    <resultMap id="BaseResultMap" type="com.briup.bookstore.po.Collect">
+        <id property="id" column="id"></id>
+        <result property="bookId" column="book_id"></result>
+        <result property="userId" column="user_id"></result>
+    </resultMap>
+    <resultMap id="ExtendResultMap" type="com.briup.bookstore.po.ext.CollectExtend" extends="BaseResultMap">
+        <result column="name" property="name"></result>
+        <result property="price"  column="price"></result>
+        <result property="cover" column="cover"></result>
+    </resultMap>
+
+    <insert id="save">
+        insert into book.es_collect(user_id, book_id) values (#{userId},#{bookId});
+    </insert>
+    <delete id="deleteByUserId">
+        delete from book.es_collect where user_id = #{uid}
+    </delete>
+    <delete id="deleteById">
+        delete from book.es_collect
+        where book_id = #{id}
+    </delete>
+
+    <select id="findByUserIdAndBookId" resultMap="BaseResultMap">
+        select id, user_id, book_id from book.es_collect where book_id = #{bookId} and user_id = #{userId};
+    </select>
+    <select id="findCollectByUserId" resultMap="ExtendResultMap">
+        select * from book.es_book  inner join book.es_collect on es_book.id = es_collect.book_id where user_id = #{userId};
+    </select>
+
+</mapper>

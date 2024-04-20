@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.bookstore.mapper.BookMapper">
+
+    <resultMap id="BaseResultMap" type="com.briup.bookstore.po.Book">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="cover" column="cover" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="author" column="author" jdbcType="VARCHAR"/>
+        <result property="publisher" column="publisher" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="DOUBLE"/>
+        <result property="storeNum" column="store_num" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+    </resultMap>
+    <insert id="insertBook">
+        insert book.es_book(name, cover, description, author, publisher, price, store_num, status, category_id)
+        values(#{name}, #{cover}, #{description}, #{author}, #{publisher}, #{price}, #{storeNum}, #{status}, #{categoryId})
+    </insert>
+
+    <update id="updateBookStatus">
+        update book.es_book set status = #{status} where id = #{id}
+    </update>
+    <update id="updateBook">
+        update book.es_book set name = #{name},
+                           cover = #{cover},
+                           description = #{description},
+                           author = #{author},
+                           publisher = #{publisher},
+                           price = #{price},
+                           store_num = #{storeNum},
+                           category_id = #{categoryId}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBookById">
+        delete from book.es_collect where book_id in (select id from book.es_book where es_book.id = #{id});
+        delete from book.es_book where id = #{id}
+    </delete>
+    <select id="selectBooksByCategoryId" resultMap="BaseResultMap">
+        select * from book.es_book where category_id = #{categoryId};
+    </select>
+
+
+</mapper>
